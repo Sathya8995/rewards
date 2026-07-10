@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RewardService {
 
-    private final RewardRepository repository;
+    private final RewardRepository rewardRepository;
 
     public RewardResponse createReward(RewardRequest rewardDto) {
         Reward reward = new Reward();
@@ -26,12 +26,11 @@ public class RewardService {
         reward.setExpiresAt(rewardDto.getExpiresAt());
         reward.setIssuedAt(LocalDateTime.now());
         reward.setStatus(RewardStatus.ISSUED);
-        reward.setRedeemedAt(null);
-        repository.save(reward);
-        return mapToDto(reward);
+        Reward savedReward = rewardRepository.save(reward);
+        return mapToDto(savedReward);
     }
 
-    public RewardResponse mapToDto(Reward reward){
+    private RewardResponse mapToDto(Reward reward){
             RewardResponse rewardResponse = new RewardResponse();
             rewardResponse.setRewardType(reward.getRewardType());
             rewardResponse.setPoints(reward.getPoints());
@@ -50,7 +49,7 @@ public class RewardService {
     }
 
     public List<RewardResponse> getCustomerRewards(String customerId) {
-        return repository.findByCustomerId(customerId)
+        return rewardRepository.findByCustomerIdOrderByIssuedAtDesc(customerId)
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toUnmodifiableList());
