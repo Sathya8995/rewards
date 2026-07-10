@@ -1,6 +1,7 @@
 package com.loyalty.rewards.reward.dto;
 
 import com.loyalty.rewards.reward.entity.RewardType;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,5 +21,7 @@ public class RewardRequest {
     @Min(1)
     private Integer points;
 
+    @NotNull(message = "Expiration date is required")
+    @Future(message = "Expiration date must be in the future")
     private LocalDateTime expiresAt;
 }

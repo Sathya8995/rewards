@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RewardRepository extends JpaRepository<Reward, Long> {
-    List<Reward> findByCustomerId(String customerId);
+    List<Reward> findByCustomerIdOrderByIssuedAtDesc(String customerId);
 
     List<Reward> findByCustomerIdAndStatus(
             String customerId,
