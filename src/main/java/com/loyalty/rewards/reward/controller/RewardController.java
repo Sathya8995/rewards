@@ -4,7 +4,6 @@ import com.loyalty.rewards.reward.dto.RewardRequest;
 import com.loyalty.rewards.reward.dto.RewardResponse;
 import com.loyalty.rewards.reward.service.RewardService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +30,8 @@ public class RewardController {
         return ResponseEntity.ok(rewardService.getCustomerRewards(customerId));
     }
 
-    @GetMapping("/reward/{rewardId}")
+    @GetMapping("/{rewardId}")
     public ResponseEntity<RewardResponse> getRewards(@PathVariable Long rewardId){
-        return ResponseEntity.ok(rewardService.getRewardsById(rewardId));
+        return ResponseEntity.ok(rewardService.getRewardById(rewardId));
     }
 }

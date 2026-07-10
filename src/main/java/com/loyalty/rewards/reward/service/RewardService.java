@@ -7,9 +7,7 @@ import com.loyalty.rewards.reward.entity.RewardStatus;
 import com.loyalty.rewards.reward.exception.RewardNotFoundException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,9 +50,6 @@ public class RewardService {
 
     public List<RewardResponse> getCustomerRewards(String customerId) {
         List<Reward> rewards = rewardRepository.findByCustomerIdOrderByIssuedAtDesc(customerId);
-        if (rewards.isEmpty()) {
-            throw new RewardNotFoundException(customerId);
-        }
 
         return rewards
                 .stream()
@@ -64,7 +59,7 @@ public class RewardService {
 
     }
 
-    public RewardResponse getRewardsById(Long rewardId) {
+    public RewardResponse getRewardById(Long rewardId) {
         return rewardRepository.findById(rewardId)
                 .map(this::mapToDto)
                 .orElseThrow(() -> new RewardNotFoundException(rewardId));
