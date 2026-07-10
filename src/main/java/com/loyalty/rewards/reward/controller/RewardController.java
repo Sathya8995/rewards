@@ -26,7 +26,7 @@ public class RewardController {
                 .body(rewardService.createReward(rewardDto));
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<RewardResponse>> getCustomerRewards(@PathVariable String customerId){
         return ResponseEntity.ok(rewardService.getCustomerRewards(customerId));
     }

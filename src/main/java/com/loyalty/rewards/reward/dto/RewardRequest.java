@@ -21,6 +21,7 @@ public class RewardRequest {
     @Min(1)
     private Integer points;
 
+    @NotNull(message = "Expiration date is required")
     @Future(message = "Expiration date must be in the future")
     private LocalDateTime expiresAt;
 }
