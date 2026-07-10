@@ -1,0 +1,12 @@
+CREATE TABLE rewards (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id VARCHAR(100) NOT NULL,
+    reward_type VARCHAR(50) NOT NULL,
+    points INT NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    issued_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP,
+    redeemed_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
