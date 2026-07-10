@@ -4,13 +4,15 @@ import com.loyalty.rewards.reward.dto.RewardRequest;
 import com.loyalty.rewards.reward.dto.RewardResponse;
 import com.loyalty.rewards.reward.entity.Reward;
 import com.loyalty.rewards.reward.entity.RewardStatus;
+import com.loyalty.rewards.reward.exception.RewardNotFoundException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -49,11 +51,23 @@ public class RewardService {
     }
 
     public List<RewardResponse> getCustomerRewards(String customerId) {
-        return rewardRepository.findByCustomerIdOrderByIssuedAtDesc(customerId)
+        List<Reward> rewards = rewardRepository.findByCustomerIdOrderByIssuedAtDesc(customerId);
+        if (rewards.isEmpty()) {
+            throw new RewardNotFoundException(customerId);
+        }
+
+        return rewards
                 .stream()
                 .map(this::mapToDto)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
 
+
+    }
+
+    public RewardResponse getRewardsById(Long rewardId) {
+        return rewardRepository.findById(rewardId)
+                .map(this::mapToDto)
+                .orElseThrow(() -> new RewardNotFoundException(rewardId));
 
     }
 }

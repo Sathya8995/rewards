@@ -30,4 +30,9 @@ public class RewardController {
     public ResponseEntity<List<RewardResponse>> getCustomerRewards(@PathVariable String customerId){
         return ResponseEntity.ok(rewardService.getCustomerRewards(customerId));
     }
+
+    @GetMapping("/reward/{rewardId}")
+    public ResponseEntity<RewardResponse> getRewards(@PathVariable Long rewardId){
+        return ResponseEntity.ok(rewardService.getRewardsById(rewardId));
+    }
 }
