@@ -80,8 +80,8 @@ public class RewardService {
             throw new RewardRedemptionException( "Reward cannot be redeemed from status: " + reward.getStatus());
         }
 
-        if (!(reward.getExpiresAt().isAfter(now))) {
-            throw new RewardRedemptionException( "Reward already expired");
+        if (!reward.getExpiresAt().isAfter(now)) {
+            throw new RewardRedemptionException( "Reward has expired");
         }
 
             reward.setStatus(RewardStatus.REDEEMED);
