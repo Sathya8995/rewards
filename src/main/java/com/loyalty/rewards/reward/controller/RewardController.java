@@ -34,4 +34,9 @@ public class RewardController {
     public ResponseEntity<RewardResponse> getRewards(@PathVariable Long rewardId){
         return ResponseEntity.ok(rewardService.getRewardById(rewardId));
     }
+
+    @PatchMapping("/{rewardId}/redeem")
+    public ResponseEntity<RewardResponse> redeemReward(@PathVariable Long rewardId){
+        return ResponseEntity.ok(rewardService.redeemReward(rewardId));
+    }
 }
