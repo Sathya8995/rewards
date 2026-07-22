@@ -9,6 +9,7 @@ import com.loyalty.rewards.reward.exception.RewardRedemptionException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,6 +68,7 @@ public class RewardService {
 
     }
 
+    @Transactional
     public RewardResponse redeemReward(Long rewardId) {
 
         LocalDateTime now = LocalDateTime.now();
