@@ -24,4 +24,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(response);
     }
+
+    @ExceptionHandler(RewardRedemptionException.class)
+    public ResponseEntity<ApiErrorResponse> handleRewardRedemptionException(
+            RewardRedemptionException ex) {
+
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
 }

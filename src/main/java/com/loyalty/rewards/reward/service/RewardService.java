@@ -5,6 +5,7 @@ import com.loyalty.rewards.reward.dto.RewardResponse;
 import com.loyalty.rewards.reward.entity.Reward;
 import com.loyalty.rewards.reward.entity.RewardStatus;
 import com.loyalty.rewards.reward.exception.RewardNotFoundException;
+import com.loyalty.rewards.reward.exception.RewardRedemptionException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,28 @@ public class RewardService {
         return rewardRepository.findById(rewardId)
                 .map(this::mapToDto)
                 .orElseThrow(() -> new RewardNotFoundException(rewardId));
+
+    }
+
+    public RewardResponse redeemReward(Long rewardId) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Reward reward = rewardRepository.findById(rewardId)
+                .orElseThrow(() -> new RewardNotFoundException(rewardId));
+
+        if(reward.getStatus() != RewardStatus.ISSUED){
+            throw new RewardRedemptionException( "Reward cannot be redeemed from status: " + reward.getStatus());
+        }
+
+        if (!(reward.getExpiresAt().isAfter(now))) {
+            throw new RewardRedemptionException( "Reward already expired");
+        }
+
+            reward.setStatus(RewardStatus.REDEEMED);
+            reward.setRedeemedAt(now);
+            Reward savedReward = rewardRepository.save(reward);
+            return mapToDto(savedReward);
 
     }
 }
