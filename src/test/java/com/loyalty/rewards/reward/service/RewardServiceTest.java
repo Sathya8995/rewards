@@ -6,7 +6,6 @@ import com.loyalty.rewards.reward.entity.RewardType;
 import com.loyalty.rewards.reward.exception.RewardNotFoundException;
 import com.loyalty.rewards.reward.exception.RewardRedemptionException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
