@@ -76,6 +76,16 @@ public class RewardService {
         Reward reward = rewardRepository.findById(rewardId)
                 .orElseThrow(() -> new RewardNotFoundException(rewardId));
 
+        validateRewardForRedemption(reward, now);
+
+        reward.setStatus(RewardStatus.REDEEMED);
+        reward.setRedeemedAt(now);
+
+        return mapToDto(reward);
+
+    }
+
+    private void validateRewardForRedemption(Reward reward, LocalDateTime now) {
         if(reward.getStatus() != RewardStatus.ISSUED){
             throw new RewardRedemptionException( "Reward cannot be redeemed from status: " + reward.getStatus());
         }
@@ -83,11 +93,5 @@ public class RewardService {
         if (!reward.getExpiresAt().isAfter(now)) {
             throw new RewardRedemptionException( "Reward has expired");
         }
-
-            reward.setStatus(RewardStatus.REDEEMED);
-            reward.setRedeemedAt(now);
-            Reward savedReward = rewardRepository.save(reward);
-            return mapToDto(savedReward);
-
     }
 }
