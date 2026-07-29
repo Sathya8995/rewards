@@ -42,20 +42,34 @@ public class RewardController {
             )
     })
     @PostMapping
-    public ResponseEntity<RewardResponse> createReward(@Valid @RequestBody RewardRequest rewardDto){
+    public ResponseEntity<RewardResponse> createReward(@Valid @RequestBody RewardRequest request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(rewardService.createReward(rewardDto));
+                .body(rewardService.createReward(request));
     }
 
+    @Operation(
+            summary = "Get customer rewards",
+            description = "Returns all rewards for a customer ordered by issue date descending"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Customer rewards retrieved successfully"
+            )
+    })
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<RewardResponse>> getCustomerRewards(@PathVariable String customerId){
+    public ResponseEntity<List<RewardResponse>> getCustomerRewards(@Parameter(
+            description = "Unique customer ID",
+            example = "CUST1001",
+            required = true
+    )@PathVariable String customerId){
         return ResponseEntity.ok(rewardService.getCustomerRewards(customerId));
     }
 
     @Operation(
-            summary = "Find the reward",
-            description = "Get the reward, using reward ID"
+            summary = "Get reward by ID",
+            description = "Returns a reward using its unique reward ID"
     )
     @ApiResponses({
             @ApiResponse(
@@ -68,7 +82,7 @@ public class RewardController {
             )
     })
     @GetMapping("/{rewardId}")
-    public ResponseEntity<RewardResponse> getRewards(@PathVariable Long rewardId){
+    public ResponseEntity<RewardResponse> getRewardById(@PathVariable Long rewardId){
         return ResponseEntity.ok(rewardService.getRewardById(rewardId));
     }
 
