@@ -7,7 +7,7 @@ import com.loyalty.rewards.reward.entity.RewardStatus;
 import com.loyalty.rewards.reward.exception.RewardNotFoundException;
 import com.loyalty.rewards.reward.exception.RewardRedemptionException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,31 +17,45 @@ import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RewardService {
 
     private final RewardRepository rewardRepository;
 
-    public RewardResponse createReward(RewardRequest rewardDto) {
-        Reward reward = new Reward();
-        log.debug("Creating reward for customerId= {},rewardType= {}, points= {}",
-                rewardDto.getCustomerId(),
-                rewardDto.getRewardType(),
-                rewardDto.getPoints());
-        reward.setCustomerId(rewardDto.getCustomerId());
-        reward.setRewardType(rewardDto.getRewardType());
-        reward.setPoints(rewardDto.getPoints());
-        reward.setExpiresAt(rewardDto.getExpiresAt());
-        reward.setIssuedAt(LocalDateTime.now());
-        reward.setStatus(RewardStatus.ISSUED);
-        Reward savedReward = rewardRepository.save(reward);
+    @Transactional
+    public RewardResponse createReward(RewardRequest request) {
+        log.debug(
+                "Creating reward for customerId={}, rewardType={}, points={}",
+                request.getCustomerId(),
+                request.getRewardType(),
+                request.getPoints()
+        );
+
+        Reward savedReward = rewardRepository.save(createRewardEntity(request));
         log.info("Reward created successfully, rewardId={}, customerId={}",
                 savedReward.getId(),
                 savedReward.getCustomerId());
-        return mapToDto(savedReward);
+        return mapToResponse(savedReward);
     }
 
-    private RewardResponse mapToDto(Reward reward){
+    private Reward createRewardEntity(RewardRequest request) {
+        Reward reward = mapRequestToEntity(request);
+        reward.setIssuedAt(LocalDateTime.now());
+        reward.setStatus(RewardStatus.ISSUED);
+        return reward;
+    }
+
+    private Reward mapRequestToEntity(RewardRequest request){
+        Reward reward = new Reward();
+        reward.setCustomerId(request.getCustomerId());
+        reward.setRewardType(request.getRewardType());
+        reward.setPoints(request.getPoints());
+        reward.setExpiresAt(request.getExpiresAt());
+
+        return reward;
+    }
+
+    private RewardResponse mapToResponse(Reward reward){
             RewardResponse rewardResponse = new RewardResponse();
             rewardResponse.setRewardType(reward.getRewardType());
             rewardResponse.setPoints(reward.getPoints());
@@ -59,20 +73,22 @@ public class RewardService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<RewardResponse> getCustomerRewards(String customerId) {
         List<Reward> rewards = rewardRepository.findByCustomerIdOrderByIssuedAtDesc(customerId);
 
         return rewards
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToResponse)
                 .toList();
 
 
     }
 
+    @Transactional(readOnly = true)
     public RewardResponse getRewardById(Long rewardId) {
         return rewardRepository.findById(rewardId)
-                .map(this::mapToDto)
+                .map(this::mapToResponse)
                 .orElseThrow(() -> {
                     log.warn("Reward not found for reward Id: {}", rewardId);
                     return new RewardNotFoundException(rewardId);});
@@ -105,7 +121,7 @@ public class RewardService {
                 reward.getId(),
                 reward.getCustomerId()
         );
-        return mapToDto(reward);
+        return mapToResponse(reward);
 
     }
 

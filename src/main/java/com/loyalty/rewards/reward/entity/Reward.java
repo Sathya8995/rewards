@@ -8,7 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "rewards")
+@Table(name = "rewards",
+        indexes = {
+                @Index(
+                        name = "idx_rewards_customer_id",
+                        columnList = "customer_id"
+                )
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,7 +41,7 @@ public class Reward {
     @Column(name = "issued_at", nullable = false)
     private LocalDateTime issuedAt;
 
-    @Column(name = "expires_at")
+    @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
     @Column(name = "redeemed_at")
