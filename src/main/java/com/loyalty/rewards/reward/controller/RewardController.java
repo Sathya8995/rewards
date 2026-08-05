@@ -12,9 +12,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/rewards")
@@ -111,5 +113,15 @@ public class RewardController {
             required = true
     )@PathVariable Long rewardId){
         return ResponseEntity.ok(rewardService.redeemReward(rewardId));
+    }
+
+    @GetMapping("/current-user")
+    public Map<String, Object> getCurrentUser(Authentication authentication) {
+
+        return Map.of(
+                "username", authentication.getName(),
+                "authenticated", authentication.isAuthenticated(),
+                "authorities", authentication.getAuthorities()
+        );
     }
 }

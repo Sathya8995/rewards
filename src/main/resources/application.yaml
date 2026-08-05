@@ -22,5 +22,8 @@ logging:
   level:
     root: INFO
     com.loyalty.rewards: DEBUG
+    org:
+      springframework:
+        security: TRACE
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{requestId}] %logger{36} - %msg%n"

@@ -1,0 +1,25 @@
+INSERT INTO app_users (
+    username,
+    password,
+    role,
+    enabled,
+    created_at,
+    updated_at
+)
+VALUES
+(
+    'admin',
+    '$2a$10$x7gR8IAGr2IfAYNivvG8aOH2OenO99UX4H2Ohr4WKEvw.OoUa5o3C',
+    'ADMIN',
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+),
+(
+    'customer',
+    '$2a$10$v5BwNnej4ICAy2TVZQKgweALVts8qSv16cW1kA/nC/7Sj1sR9aivi',
+    'CUSTOMER',
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+);
