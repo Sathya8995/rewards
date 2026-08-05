@@ -1,14 +1,13 @@
 package com.loyalty.rewards.reward.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(
         name = "app_users",
@@ -56,5 +55,15 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
-    // constructors, getters, and setters
+    public User(
+            String username,
+            String encodedPassword,
+            Role role
+    ) {
+        this.username = username;
+        this.password = encodedPassword;
+        this.role = role;
+        this.enabled = true;
+    }
+
 }
