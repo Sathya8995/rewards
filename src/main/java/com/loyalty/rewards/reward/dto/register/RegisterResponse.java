@@ -1,4 +1,4 @@
-package com.loyalty.rewards.reward.dto.auth;
+package com.loyalty.rewards.reward.dto.register;
 
 import com.loyalty.rewards.reward.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;

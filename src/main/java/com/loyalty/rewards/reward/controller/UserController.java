@@ -1,7 +1,7 @@
 package com.loyalty.rewards.reward.controller;
 
-import com.loyalty.rewards.reward.dto.auth.RegisterRequest;
-import com.loyalty.rewards.reward.dto.auth.RegisterResponse;
+import com.loyalty.rewards.reward.dto.register.RegisterRequest;
+import com.loyalty.rewards.reward.dto.register.RegisterResponse;
 import com.loyalty.rewards.reward.service.UserRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
