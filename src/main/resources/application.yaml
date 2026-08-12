@@ -27,3 +27,8 @@ logging:
         security: TRACE
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{requestId}] %logger{36} - %msg%n"
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 3600000
