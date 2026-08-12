@@ -12,6 +12,9 @@ public record JwtProperties(
         String secret,
 
         @Positive
-        long expirationMs
+        long expirationMs,
+
+        @Positive
+        long refreshExpirationMs
 ) {
 }

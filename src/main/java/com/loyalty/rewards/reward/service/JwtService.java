@@ -39,8 +39,28 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateRefreshToken(UserDetails userDetails){
+        Date now = new Date();
+
+        Date refreshExpiration = new Date(
+                now.getTime() + jwtProperties.refreshExpirationMs()
+        );
+
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(now)
+                .expiration(refreshExpiration)
+                .claim("token_type", "refresh")
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractTokenType (String token) {
+        return extractClaim(token, claims -> claims.get("token_type", String.class));
     }
 
     public long getExpirationSeconds() {

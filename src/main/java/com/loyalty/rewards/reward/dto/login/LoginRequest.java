@@ -1,4 +1,4 @@
-package com.loyalty.rewards.reward.dto.jwt;
+package com.loyalty.rewards.reward.dto.login;
 
 import jakarta.validation.constraints.NotBlank;
 

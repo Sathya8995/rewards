@@ -1,7 +1,7 @@
 package com.loyalty.rewards.reward.service;
 
-import com.loyalty.rewards.reward.dto.auth.RegisterRequest;
-import com.loyalty.rewards.reward.dto.auth.RegisterResponse;
+import com.loyalty.rewards.reward.dto.register.RegisterRequest;
+import com.loyalty.rewards.reward.dto.register.RegisterResponse;
 import com.loyalty.rewards.reward.entity.Role;
 import com.loyalty.rewards.reward.entity.User;
 import com.loyalty.rewards.reward.exception.UserAlreadyExistsException;
