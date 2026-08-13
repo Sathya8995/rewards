@@ -26,11 +26,6 @@ public class ChangePasswordService {
     @Transactional
     public void changePassword(ChangePasswordRequest request) {
 
-        validateNewPassword(
-                request.currentPassword(),
-                request.newPassword()
-        );
-
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
@@ -42,6 +37,11 @@ public class ChangePasswordService {
                                 "User not found with username: " + username
                         )
                 );
+
+        validateNewPassword(
+                request.currentPassword(),
+                request.newPassword()
+        );
 
         validateCurrentPassword(
                 request.currentPassword(),
