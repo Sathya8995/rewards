@@ -57,6 +57,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/rewards/*/redeem")
                         .hasRole("CUSTOMER")
 
+                        .requestMatchers(HttpMethod.POST, "/api/auth/change-password")
+                        .authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,

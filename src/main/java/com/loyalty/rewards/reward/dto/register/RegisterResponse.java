@@ -13,7 +13,7 @@ public record RegisterResponse(
         )
         Long id,
         @Schema(
-                description = "Username to registe"
+                description = "Username to register"
         )
         String username,
         Role role,
