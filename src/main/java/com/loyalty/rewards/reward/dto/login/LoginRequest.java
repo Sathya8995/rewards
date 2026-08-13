@@ -3,10 +3,10 @@ package com.loyalty.rewards.reward.dto.login;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
-        @NotBlank
+        @NotBlank(message = "Username is required")
         String username,
 
-        @NotBlank
+        @NotBlank(message = "Password is required")
         String password
 ) {
 }
