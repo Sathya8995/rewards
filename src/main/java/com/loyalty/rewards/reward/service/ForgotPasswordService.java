@@ -2,7 +2,7 @@ package com.loyalty.rewards.reward.service;
 
 import com.loyalty.rewards.reward.dto.forgotpassword.ForgotPasswordRequest;
 import com.loyalty.rewards.reward.dto.forgotpassword.ForgotPasswordResponse;
-import com.loyalty.rewards.reward.entity.Token;
+import com.loyalty.rewards.reward.entity.PasswordResetToken;
 import com.loyalty.rewards.reward.repository.TokenRepository;
 import com.loyalty.rewards.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +41,10 @@ public class ForgotPasswordService {
         }
 
 
-        List<Token> resetPasswordTokens = tokenRepository.findByUsername(username);
-        for(Token token: resetPasswordTokens){
+        List<PasswordResetToken> resetPasswordTokens = tokenRepository.findByUsername(username);
+        for(PasswordResetToken token: resetPasswordTokens){
             if(!token.isUsedStatus()){
-                token.changeUsedStatus(true);
+                token.markUsed();
             }
         }
 
@@ -54,9 +54,9 @@ public class ForgotPasswordService {
 
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(10);
 
-        Token token = new Token(username, tokenHash, expiration);
+        PasswordResetToken token = new PasswordResetToken(username, tokenHash, expiration);
 
-        Token savedToken = tokenRepository.save(token);
+        PasswordResetToken savedToken = tokenRepository.save(token);
 
         return new ForgotPasswordResponse(savedToken.getUsername(), rawToken, savedToken.getExpiresAt());
 

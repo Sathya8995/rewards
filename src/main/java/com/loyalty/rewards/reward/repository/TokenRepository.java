@@ -1,14 +1,14 @@
 package com.loyalty.rewards.reward.repository;
 
-import com.loyalty.rewards.reward.entity.Token;
+import com.loyalty.rewards.reward.entity.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TokenRepository extends JpaRepository<Token, Long> {
+public interface TokenRepository extends JpaRepository<PasswordResetToken, Long> {
 
-    Optional<Token> findByTokenHash(String tokenHash);
+    Optional<PasswordResetToken> findByTokenHash(String tokenHash);
 
-    List<Token> findByUsername(String username);
+    List<PasswordResetToken> findByUsername(String username);
 }

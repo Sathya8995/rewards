@@ -1,7 +1,7 @@
 package com.loyalty.rewards.reward.service;
 
 import com.loyalty.rewards.reward.dto.resetpassword.ResetPasswordRequest;
-import com.loyalty.rewards.reward.entity.Token;
+import com.loyalty.rewards.reward.entity.PasswordResetToken;
 import com.loyalty.rewards.reward.entity.User;
 import com.loyalty.rewards.reward.exception.InvalidResetTokenException;
 import com.loyalty.rewards.reward.exception.PasswordReuseException;
@@ -38,7 +38,7 @@ public class ResetPasswordService {
 
         String hashedResetToken = hashToken(rawResetToken);
 
-        Token resetToken = tokenRepository.findByTokenHash(hashedResetToken)
+        PasswordResetToken resetToken = tokenRepository.findByTokenHash(hashedResetToken)
                 .orElseThrow(() -> new InvalidResetTokenException("Entered reset token is invalid"));
 
         if(resetToken.isUsedStatus()){
@@ -66,10 +66,8 @@ public class ResetPasswordService {
         }
 
         user.changePassword(passwordEncoder.encode(resetPasswordRequest.newPassword()));
-        User savedUser = userRepository.save(user);
 
-        resetToken.changeUsedStatus(true);
-        Token savedToken = tokenRepository.save(resetToken);
+        resetToken.markUsed();
     }
 
     private String hashToken(String token) {

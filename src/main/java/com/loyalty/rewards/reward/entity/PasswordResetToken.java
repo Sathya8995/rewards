@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
         name = "reset_token"
 
 )
-public class Token {
+public class PasswordResetToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class Token {
     @Column(name = "used")
     private boolean usedStatus = false;
 
-    public void changeUsedStatus(Boolean usedStatus){
-        this.usedStatus = usedStatus;
+    public void markUsed() {
+        this.usedStatus = true;
     }
 
     @Column(name = "expires_at", nullable = false)
@@ -43,7 +43,7 @@ public class Token {
         createdAt = LocalDateTime.now();
     }
 
-    public Token(String username, String tokenHash, LocalDateTime  expiresAt){
+    public PasswordResetToken(String username, String tokenHash, LocalDateTime  expiresAt){
         this.username = username;
         this.tokenHash = tokenHash;
         this.expiresAt = expiresAt;
