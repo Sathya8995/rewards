@@ -18,6 +18,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -37,6 +38,16 @@ public class ForgotPasswordService {
 
         if(!userRepository.existsByUsername(username)){
             throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        try{
+        List<Token> tokens = tokenRepository.findByUsername(username).orElseThrow();
+        for(Token token: tokens){
+            if(!token.isUsedStatus()){
+                token.changeUsedStatus(true);
+            }        }
+        } catch (Exception e) {
+            log.debug(e.getMessage());
         }
 
         String tokenHash = hashToken(generateResetToken());
