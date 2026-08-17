@@ -14,7 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.HexFormat;
 
 @Service
 @Slf4j
@@ -30,22 +34,24 @@ public class ResetPasswordService {
     @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest){
 
-        String resetToken = resetPasswordRequest.resetToken();
+        String rawResetToken = resetPasswordRequest.resetToken();
 
-        Token token = tokenRepository.findByTokenHash(resetToken)
+        String hashedResetToken = hashToken(rawResetToken);
+
+        Token resetToken = tokenRepository.findByTokenHash(hashedResetToken)
                 .orElseThrow(() -> new InvalidResetTokenException("Entered reset token is invalid"));
 
-        if(token.isUsedStatus()){
+        if(resetToken.isUsedStatus()){
             throw new InvalidResetTokenException("Entered reset token is invalid");
         }
 
         LocalDateTime now = LocalDateTime.now();
 
-        if(token.getExpiresAt().isBefore(now)){
+        if(resetToken.getExpiresAt().isBefore(now)){
             throw new InvalidResetTokenException("Reset token is expired");
         }
 
-        String username = token.getUsername();
+        String username = resetToken.getUsername();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: " + username));
@@ -62,7 +68,27 @@ public class ResetPasswordService {
         user.changePassword(passwordEncoder.encode(resetPasswordRequest.newPassword()));
         User savedUser = userRepository.save(user);
 
-        token.changeUsedStatus(true);
-        Token savedToken = tokenRepository.save(token);
+        resetToken.changeUsedStatus(true);
+        Token savedToken = tokenRepository.save(resetToken);
     }
+
+    private String hashToken(String token) {
+        try {
+            MessageDigest digest =
+                    MessageDigest.getInstance("SHA-256");
+
+            byte[] hash = digest.digest(
+                    token.getBytes(StandardCharsets.UTF_8)
+            );
+
+            return HexFormat.of().formatHex(hash);
+
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException(
+                    "SHA-256 algorithm not available",
+                    ex
+            );
+        }
+    }
+
 }

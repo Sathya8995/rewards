@@ -40,17 +40,17 @@ public class ForgotPasswordService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
-        try{
-        List<Token> tokens = tokenRepository.findByUsername(username).orElseThrow();
-        for(Token token: tokens){
+
+        List<Token> resetPasswordTokens = tokenRepository.findByUsername(username);
+        for(Token token: resetPasswordTokens){
             if(!token.isUsedStatus()){
                 token.changeUsedStatus(true);
-            }        }
-        } catch (Exception e) {
-            log.debug(e.getMessage());
+            }
         }
 
-        String tokenHash = hashToken(generateResetToken());
+        String rawToken = generateResetToken();
+
+        String tokenHash = hashToken(rawToken);
 
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(10);
 
@@ -58,7 +58,7 @@ public class ForgotPasswordService {
 
         Token savedToken = tokenRepository.save(token);
 
-        return new ForgotPasswordResponse(savedToken.getUsername(), savedToken.getTokenHash(), savedToken.getExpiresAt());
+        return new ForgotPasswordResponse(savedToken.getUsername(), rawToken, savedToken.getExpiresAt());
 
     }
 
