@@ -3,12 +3,10 @@ package com.loyalty.rewards.reward.service;
 import com.loyalty.rewards.reward.dto.forgotpassword.ForgotPasswordRequest;
 import com.loyalty.rewards.reward.dto.forgotpassword.ForgotPasswordResponse;
 import com.loyalty.rewards.reward.entity.Token;
-import com.loyalty.rewards.reward.entity.User;
 import com.loyalty.rewards.reward.repository.TokenRepository;
 import com.loyalty.rewards.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +41,7 @@ public class ForgotPasswordService {
 
         String tokenHash = hashToken(generateResetToken());
 
-        LocalDateTime expiration = LocalDateTime.now().plusSeconds(10);
+        LocalDateTime expiration = LocalDateTime.now().plusMinutes(10);
 
         Token token = new Token(username, tokenHash, expiration);
 

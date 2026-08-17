@@ -8,8 +8,4 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
     Optional<Token> findByTokenHash(String tokenHash);
-
-    boolean existsByTokenHash(String tokenHash);
-
-    void deleteByTokenHash(String tokenHash);
 }

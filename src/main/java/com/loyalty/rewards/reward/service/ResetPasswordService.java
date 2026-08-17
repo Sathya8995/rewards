@@ -4,6 +4,7 @@ import com.loyalty.rewards.reward.dto.resetpassword.ResetPasswordRequest;
 import com.loyalty.rewards.reward.entity.Token;
 import com.loyalty.rewards.reward.entity.User;
 import com.loyalty.rewards.reward.exception.InvalidResetTokenException;
+import com.loyalty.rewards.reward.exception.PasswordReuseException;
 import com.loyalty.rewards.reward.repository.TokenRepository;
 import com.loyalty.rewards.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,17 +32,16 @@ public class ResetPasswordService {
 
         String resetToken = resetPasswordRequest.resetToken();
 
-        if(!tokenRepository.existsByTokenHash(resetToken)){
-            throw new InvalidResetTokenException("Reset token is invalid");
-        }
-
         Token token = tokenRepository.findByTokenHash(resetToken)
-                .orElseThrow(() -> new InvalidResetTokenException("Invalid Reset Token"));
+                .orElseThrow(() -> new InvalidResetTokenException("Entered reset token is invalid"));
+
+        if(token.isUsedStatus()){
+            throw new InvalidResetTokenException("Entered reset token is invalid");
+        }
 
         LocalDateTime now = LocalDateTime.now();
 
         if(token.getExpiresAt().isBefore(now)){
-            tokenRepository.deleteByTokenHash(resetToken);
             throw new InvalidResetTokenException("Reset token is expired");
         }
 
@@ -50,9 +50,19 @@ public class ResetPasswordService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: " + username));
 
+        if (passwordEncoder.matches(
+                resetPasswordRequest.newPassword(),
+                user.getPassword()
+        )) {
+            throw new PasswordReuseException(
+                    "New password cannot be the same as current password"
+            );
+        }
+
         user.changePassword(passwordEncoder.encode(resetPasswordRequest.newPassword()));
         User savedUser = userRepository.save(user);
 
-        tokenRepository.deleteByTokenHash(resetToken);
+        token.changeUsedStatus(true);
+        Token savedToken = tokenRepository.save(token);
     }
 }
