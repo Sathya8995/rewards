@@ -4,16 +4,23 @@ import com.loyalty.rewards.reward.dto.RewardRequest;
 import com.loyalty.rewards.reward.dto.RewardResponse;
 import com.loyalty.rewards.reward.entity.Reward;
 import com.loyalty.rewards.reward.entity.RewardStatus;
+import com.loyalty.rewards.reward.entity.User;
+import com.loyalty.rewards.reward.exception.RewardAccessDeniedException;
 import com.loyalty.rewards.reward.exception.RewardNotFoundException;
 import com.loyalty.rewards.reward.exception.RewardRedemptionException;
 import com.loyalty.rewards.reward.repository.RewardRepository;
+import com.loyalty.rewards.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -21,6 +28,8 @@ import java.util.List;
 public class RewardService {
 
     private final RewardRepository rewardRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public RewardResponse createReward(RewardRequest request) {
@@ -98,9 +107,16 @@ public class RewardService {
     @Transactional
     public RewardResponse redeemReward(Long rewardId) {
 
-        LocalDateTime now = LocalDateTime.now();
+        log.debug("Validating reward ownership");
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
 
-        log.debug("Attempting to redeem rewardId={}", rewardId);
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found for User: " + username)
+        );
+
         Reward reward = rewardRepository.findById(rewardId)
                 .orElseThrow(() -> {
                     log.warn(
@@ -110,6 +126,22 @@ public class RewardService {
 
                     return new RewardNotFoundException(rewardId);
                 });
+
+        if(!Objects.equals(
+                user.getCustomerId(),
+                reward.getCustomerId()
+        )){
+            throw new RewardAccessDeniedException("User does not have permission to access this reward");
+        }
+        log.debug(
+                "Reward ownership validation successful, username={}, rewardId={}",
+                username,
+                rewardId
+        );
+
+        LocalDateTime now = LocalDateTime.now();
+
+        log.debug("Attempting to redeem rewardId={}", rewardId);
 
         validateRewardForRedemption(reward, now);
 

@@ -113,4 +113,19 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(RewardAccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleRewardAccessDeniedException(
+            RewardAccessDeniedException ex) {
+
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
+
 }
