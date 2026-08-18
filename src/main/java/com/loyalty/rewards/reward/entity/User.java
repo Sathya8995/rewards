@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -26,6 +27,12 @@ public class User {
 
     @Column(nullable = false, length = 100)
     private String username;
+
+    @Column(name = "customer_id", length = 100)
+    private String customerId = "CUST-" + UUID.randomUUID()
+            .toString()
+            .substring(0, 8)
+            .toUpperCase();
 
     @Column(nullable = false)
     private String password;
